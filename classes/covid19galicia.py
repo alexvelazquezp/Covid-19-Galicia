@@ -6,6 +6,7 @@ import sys
 import requests
 import datetime
 import os
+import io
 
 class covid19galicia:
     
@@ -59,7 +60,8 @@ class covid19galicia:
         
     def getActivosCuradosFallecidos(self):
         file = '_COVID19_Web_ActivosCuradosFallecidos.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
         df['Fecha'] = pd.to_datetime(df['Fecha'])
         
@@ -68,7 +70,8 @@ class covid19galicia:
     
     def getCifrasTotais(self):
         file = '_COVID19_Web_CifrasTotais.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Fecha'] = [(d[0]) for d in df['Fecha'].str.split(' ')]
         df['Fecha'] = pd.to_datetime(df['Fecha'])
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
@@ -79,14 +82,16 @@ class covid19galicia:
     
     def getFallecidos(self):
         file = '_COVID19_Web_Fallecidos.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
         
         return df
     
     def getInfectados(self):
         file = '_COVID19_Web_InfectadosPorFecha.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
         df['Fecha'] = pd.to_datetime(df['Fecha'])
         
@@ -95,7 +100,8 @@ class covid19galicia:
     
     def getOcupacionCamas(self):
         file = '_COVID19_Web_OcupacionCamasHospital.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Fecha'] = [(d[0]) for d in df['Fecha'].str.split(' ')]
         df['Fecha'] = pd.to_datetime(df['Fecha'])
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
@@ -106,7 +112,8 @@ class covid19galicia:
     
     def getInfeccionesPorFecha(self):
         file = '_COVID19_Web_PorcentajeInfeccionesPorFecha.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
         df['Fecha'] = pd.to_datetime(df['Fecha'])
         df['Porcentaje_Infecciones'] = [float(p[0].replace(',','.')) for p in df['Porcentaje_Infecciones'].str.split('%')]
@@ -118,7 +125,8 @@ class covid19galicia:
     
     def getInfectadosGenero(self):
         file = '_COVID19_Web_PorcentajeInfectadosPorGenero.csv'
-        df = pd.read_csv(self.path+self.datefile+file, decimal=',', thousands='.')
+        s = requests.get(self.path+self.datefile+file).content
+        df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
         
         return df
