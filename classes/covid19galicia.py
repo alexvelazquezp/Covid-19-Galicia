@@ -373,15 +373,25 @@ class covid19galicia:
         level = fallecidos['Exitus'].max()+2
         plt.annotate('', xycoords='data', xy=('2020-03-01',level), xytext=('2020-06-15',level), 
                      arrowprops=dict(arrowstyle='<->', connectionstyle='arc3', color='red', lw=2))
-        plt.annotate('1º ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')
+        plt.annotate('1ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')
 
         #Anota datos para la 2ª ola
-        wave = int(fallecidos[fallecidos.index > '2020-08-01'].sum())
-        center = (datetime.datetime.strptime(self.datefile, '%Y-%m-%d')-datetime.datetime.strptime('2020-08-01', '%Y-%m-%d')).days
+        wave = int(fallecidos[fallecidos.index > '2020-08-01'].sum()) - int(fallecidos[fallecidos.index >= '2020-12-21'].sum())
+        center = (datetime.datetime.strptime('2020-12-21', '%Y-%m-%d')-datetime.datetime.strptime('2020-08-01', '%Y-%m-%d')).days
         center = (datetime.datetime.strptime('2020-08-01', '%Y-%m-%d') + timedelta(days=center//2)).strftime("%Y-%m-%d")
         max_date = fallecidos.index.max()
-        plt.annotate('', xycoords='data', xy=('2020-08-01',level), xytext=(max_date,level), 
+        plt.annotate('', xycoords='data', xy=('2020-08-01',level), xytext=('2020-12-21',level), 
                      arrowprops=dict(arrowstyle='<->', connectionstyle='arc3', color='red', lw=2))
-        plt.annotate('2º ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')
+        plt.annotate('2ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')
+        
+        #Anota datos para la 3ª ola
+        wave = int(fallecidos[fallecidos.index >= '2020-12-21'].sum())
+        center = (datetime.datetime.strptime(self.datefile, '%Y-%m-%d')-datetime.datetime.strptime('2020-12-21', '%Y-%m-%d')).days
+        center = (datetime.datetime.strptime('2020-12-21', '%Y-%m-%d') + timedelta(days=center//2)).strftime("%Y-%m-%d")
+        max_date = fallecidos.index.max()
+        plt.annotate('', xycoords='data', xy=('2020-12-21',level), xytext=(max_date,level), 
+                     arrowprops=dict(arrowstyle='<->', connectionstyle='arc3', color='red', lw=2))
+        plt.annotate('3ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')        
+        
         plt.savefig(self.figures_dir+self.datefile+'_fallecidos'+'.png') 
         plt.show()
