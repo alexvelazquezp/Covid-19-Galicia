@@ -306,7 +306,7 @@ class covid19galicia:
         #Lee el fichero de incidencia acumulada
         inc = pd.read_csv('data-jKpTc.csv')
         casos = []
-        for caso in list(inc['CASOS']):
+        for caso in list(inc['CASOS_14_DIAS']):
             try:
                 casos.append(int(caso.split(': ')[1].split('.')[0]))
             except:
@@ -314,13 +314,13 @@ class covid19galicia:
                     casos.append(1) #Como no se sabe la cifra concreta, optamos por la menor 
                 elif caso == 'Sen novos casos diagnosticados no concello.':
                     casos.append(0)
-        inc['CASOS'] = casos
+        inc['CASOS_14_DIAS'] = casos
         #Lee el fichero de población por concello
         pop_concellos = pd.read_csv('pop_concellos.csv')
         #Fusiona ambos dataframe en uno único y calcula la incidencia
         fusion = pd.merge(how='inner', left=inc, right=pop_concellos, left_on='ID', right_on='Codigo')
-        fusion = fusion[['Municipio', 'Habitantes', 'CASOS']]
-        fusion.rename(columns={'CASOS': 'Casos'}, inplace=True)
+        fusion = fusion[['Municipio', 'Habitantes', 'CASOS_14_DIAS']]
+        fusion.rename(columns={'CASOS_14_DIAS': 'Casos'}, inplace=True)
         fusion['Inc100K'] = (fusion['Casos'] * 100000) // fusion['Habitantes']
         
         return fusion
