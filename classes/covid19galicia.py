@@ -288,16 +288,16 @@ class covid19galicia:
         #Dibuja la gráfica
         colors = ['blue', 'green', 'red', 'orange', 'purple', 'brown', 'magenta', 'olive']
         todos.plot(figsize=(18,12), alpha=0.7, color=colors)
-        date_max = str(df['Fecha'].max()).split(' ')[0]
-        for i,area in enumerate(self.dict_areas.values()):
-            plt.text(datetime.datetime.strptime(date_max,'%Y-%m-%d') + timedelta(2), todos[area].tail(1)[0], 
-                     area, color=colors[i], size=12)
+#         date_max = str(df['Fecha'].max()).split(' ')[0]
+#         for i,area in enumerate(self.dict_areas.values()):
+#             plt.text(datetime.datetime.strptime(date_max,'%Y-%m-%d') + timedelta(2), todos[area].tail(1)[0], 
+#                      area, color=colors[i], size=12)
         plt.grid(alpha=0.3)
         plt.xlabel('Fecha')
         plt.ylabel('Positivos últimos 7 días')
         plt.title('Positivos acumulados en 7 días', fontsize=18)
         plt.legend(loc='upper left')
-        plt.xlim('2020-03-10',date.today() + timedelta(30))
+        plt.xlim('2020-03-10',date.today() + timedelta(7))
         plt.savefig(self.figures_dir+self.datefile+'_casos_activos_agrupado'+'.png') 
         plt.show()
         
@@ -332,7 +332,7 @@ class covid19galicia:
             df = inc14.sort_values('Inc100K', ascending=False).head(10)
             df = df[['Municipio', 'Inc100K']].sort_values('Inc100K', ascending=True)
             title = 'Top 10 concellos - Casos por 100.000 habitantes a 14 días'
-            offset = 30
+            offset = inc14['Inc100K'].max() * 0.02
             save = '_top10_concellos'
         elif tipo == 'ciudades':
             ciudades = ['A Coruña', 'Ferrol', 'Santiago de Compostela', 'Lugo', 'Ourense', 'Pontevedra', 'Vigo']
