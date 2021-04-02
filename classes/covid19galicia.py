@@ -258,7 +258,10 @@ class covid19galicia:
         for i,val in enumerate(df['Camas_Ocupadas_UC']):
             if not val==0:
                 label = format(int(val), ',').replace(',','.')
-                plt.annotate(label,xy=(val_prev[i]+val-0.5,i),color='black',fontweight='semibold',ha='right',va='center')
+                if val==1:
+                    offset = 0.25
+                else: offset = 0.5
+                plt.annotate(label,xy=(val_prev[i]+val-offset,i),color='black',fontweight='semibold',ha='right',va='center')
 
         plt.title('Ocupación actual de camas en Galicia')        
         plt.xlabel('Camas')
@@ -305,23 +308,34 @@ class covid19galicia:
         """Calcula la incidencia por 100.000 habitantes en los últimos 14 días"""
         #Lee el fichero de incidencia acumulada
         inc = pd.read_csv('data-jKpTc.csv')
-        casos = []
+        casos14, casos7 = [], []
         for caso in list(inc['CASOS_14_DIAS']):
             try:
-                casos.append(int(caso.split(': ')[1].split('.')[0]))
+                casos14.append(int(caso.split(': ')[1].split('.')[0]))
             except:
                 if caso == 'Número de novos casos diagnosticados no concello: entre 1 e 9.':
-                    casos.append(1) #Como no se sabe la cifra concreta, optamos por la menor 
+                    casos14.append(9) #Como no se sabe la cifra concreta, optamos por la mayor 
                 elif caso == 'Sen novos casos diagnosticados no concello.':
-                    casos.append(0)
-        inc['CASOS_14_DIAS'] = casos
+                    casos14.append(0)
+        for caso in list(inc['CASOS_7_DIAS']):
+            try:
+                casos7.append(int(caso.split(': ')[1].split('.')[0]))
+            except:
+                if caso == 'Número de novos casos diagnosticados no concello: entre 1 e 9.':
+                    casos7.append(9) #Como no se sabe la cifra concreta, optamos por la mayor 
+                elif caso == 'Sen novos casos diagnosticados no concello.':
+                    casos7.append(0)
+        inc['CASOS_14_DIAS'] = casos14
+        inc['CASOS_7_DIAS'] = casos7
         #Lee el fichero de población por concello
         pop_concellos = pd.read_csv('pop_concellos.csv')
         #Fusiona ambos dataframe en uno único y calcula la incidencia
         fusion = pd.merge(how='inner', left=inc, right=pop_concellos, left_on='ID', right_on='Codigo')
-        fusion = fusion[['Municipio', 'Habitantes', 'CASOS_14_DIAS']]
-        fusion.rename(columns={'CASOS_14_DIAS': 'Casos'}, inplace=True)
+        fusion = fusion[['Municipio', 'Habitantes', 'CASOS_7_DIAS', 'CASOS_14_DIAS']]
+        fusion.rename(columns={'CASOS_14_DIAS': 'Casos', 'CASOS_7_DIAS':'Casos7'}, inplace=True)
         fusion['Inc100K'] = (fusion['Casos'] * 100000) // fusion['Habitantes']
+        fusion['Inc100K_7'] = (fusion['Casos7'] * 2 * 100000) // fusion['Habitantes']
+        fusion['Tendencia'] = ((fusion['Inc100K_7'] - fusion['Inc100K']) / fusion['Inc100K'])*100
         
         return fusion
     
@@ -339,7 +353,7 @@ class covid19galicia:
             df = inc14[inc14['Municipio'].isin(ciudades)]
             df = df[['Municipio','Inc100K']].sort_values('Inc100K', ascending=True)
             title = 'Principales ciudades - Casos por 100.000 habitantes a 14 días'
-            offset = 5
+            offset = df['Inc100K'].max() * 0.02
             save = '_principales_ciudades'
         else:
             raise ValueError('plotIncidenciaAcumulada only supports top10 and ciudades as tipo')
