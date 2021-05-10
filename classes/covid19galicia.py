@@ -399,13 +399,22 @@ class covid19galicia:
         plt.annotate('2ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')
         
         #Anota datos para la 3ª ola
-        wave = int(fallecidos[fallecidos.index >= '2020-12-21'].sum())
-        center = (datetime.datetime.strptime(self.datefile, '%Y-%m-%d')-datetime.datetime.strptime('2020-12-21', '%Y-%m-%d')).days
-        center = (datetime.datetime.strptime('2020-12-21', '%Y-%m-%d') + timedelta(days=center//2)).strftime("%Y-%m-%d")
+        wave = int(fallecidos[fallecidos.index > '2020-12-22'].sum()) - int(fallecidos[fallecidos.index >= '2021-03-31'].sum())
+        center = (datetime.datetime.strptime('2021-03-31', '%Y-%m-%d')-datetime.datetime.strptime('2020-12-22', '%Y-%m-%d')).days
+        center = (datetime.datetime.strptime('2020-12-22', '%Y-%m-%d') + timedelta(days=center//2)).strftime("%Y-%m-%d")
         max_date = fallecidos.index.max()
-        plt.annotate('', xycoords='data', xy=('2020-12-21',level), xytext=(max_date,level), 
+        plt.annotate('', xycoords='data', xy=('2020-12-22',level), xytext=('2021-03-31',level), 
                      arrowprops=dict(arrowstyle='<->', connectionstyle='arc3', color='red', lw=2))
-        plt.annotate('3ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')        
+        plt.annotate('3ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')
+        
+        #Anota datos para la 4ª ola
+        wave = int(fallecidos[fallecidos.index >= '2021-04-01'].sum())
+        center = (datetime.datetime.strptime(self.datefile, '%Y-%m-%d')-datetime.datetime.strptime('2021-04-01', '%Y-%m-%d')).days
+        center = (datetime.datetime.strptime('2021-04-01', '%Y-%m-%d') + timedelta(days=center//2)).strftime("%Y-%m-%d")
+        max_date = fallecidos.index.max()
+        plt.annotate('', xycoords='data', xy=('2021-04-01',level), xytext=(max_date,level), 
+                     arrowprops=dict(arrowstyle='<->', connectionstyle='arc3', color='red', lw=2))
+        plt.annotate('4ª ola: {} muertos'.format(wave), xy=(center, level+1), ha='center')        
         
         plt.savefig(self.figures_dir+self.datefile+'_fallecidos'+'.png') 
         plt.show()
