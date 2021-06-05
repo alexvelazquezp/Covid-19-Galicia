@@ -29,7 +29,7 @@ class covid19galicia:
                          'A.S. VIGO':'Vigo'
                         }
         self.areas = ['A Coruña', 'Ferrol', 'Lugo', 'Ourense', 'Pontevedra', 'Santiago', 'Vigo', 'GALICIA']
-        file = '_COVID19_Web_CifrasTotais.csv'
+        file = '_COVID19_Web_CifrasTotais_PDIA.csv'
         #Obtiene el día 'datefile' más reciente en los ficheros
         for i in range(0,10):
             self.datefile = (date.today() - timedelta(days=i)).strftime("%Y-%m-%d")
@@ -69,7 +69,7 @@ class covid19galicia:
     
     
     def getCifrasTotais(self):
-        file = '_COVID19_Web_CifrasTotais.csv'
+        file = '_COVID19_Web_CifrasTotais_PDIA.csv'
         s = requests.get(self.path+self.datefile+file).content
         df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Fecha'] = [(d[0]) for d in df['Fecha'].str.split(' ')]
@@ -89,7 +89,7 @@ class covid19galicia:
         return df
     
     def getInfectados(self):
-        file = '_COVID19_Web_InfectadosPorFecha.csv'
+        file = '_COVID19_Web_InfectadosPorFecha_PDIA.csv'
         s = requests.get(self.path+self.datefile+file).content
         df = pd.read_csv(io.StringIO(s.decode('utf-8')), decimal=',', thousands='.')
         df['Area_Sanitaria'] = df['Area_Sanitaria'].replace(self.dict_areas)
